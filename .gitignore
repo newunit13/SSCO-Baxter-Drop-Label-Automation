@@ -2,11 +2,10 @@
 /.vscode
 /build
 /dist
-/email.msg
+/*.msg
+/*.tsv
+/*.txt
 /main.spec
-/output.csv
-/output.tsv
-/output.txt
-/output1.csv
+/errors.txt
 /test.py
 /__pycache__
