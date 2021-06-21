@@ -131,12 +131,16 @@ def ProcessDrop(input_file: str) -> Dict:
         print(f"Processing {results['numDrops']} bookings")
         for i, fl in enumerate(msg.attachments):
 
-            booking_id = re.findall(r"Booking ID: (.*)", fl.data.body)[0].strip().replace('\r','')
-            shipper = ParseShipperAddress(re.findall(r"SHIPPER\s([\s\S]*)\s{2}CONSIGNEE", fl.data.body)[0].strip().replace('\r',''))
-            consignee = ParseConsigneeAddress(re.findall(r"CONSIGNEE\s([\s\S]*)\s{2}PICKUP LOCATION", fl.data.body)[0].strip().replace('\r',''))
-            pickup_location = ParsePickupLocationAddress(re.findall(r"PICKUP LOCATION\s([\s\S]*)INSTRUCTIONS", fl.data.body)[0].strip().replace('\r',''))
-
             try:
+
+                booking_id = re.findall(r"Booking ID: (.*)", fl.data.body)[0].strip().replace('\r','')
+                shipper_raw = re.findall(r"SHIPPER\s([\s\S]*)\s{2}CONSIGNEE", fl.data.body)[0].strip().replace('\r','')
+                consignee_raw = re.findall(r"CONSIGNEE\s([\s\S]*)\s{2}PICKUP LOCATION", fl.data.body)[0].strip().replace('\r','')
+                pickup_location_raw = re.findall(r"PICKUP LOCATION\s([\s\S]*)INSTRUCTIONS", fl.data.body)[0].strip().replace('\r','')
+
+                shipper = ParseShipperAddress(shipper_raw)
+                consignee = ParseConsigneeAddress(consignee_raw)
+                pickup_location = ParsePickupLocationAddress(pickup_location_raw)
 
                 shipment_info = {
                     "ReferenceNumber"                   : booking_id,
@@ -170,11 +174,11 @@ def ProcessDrop(input_file: str) -> Dict:
                     "Order Item Saved Elements"         : "",
                     "Carrier Notes"                     : "",
                     "shipper"                           : shipper,
-                    "shipperRaw"                        : re.findall(r"SHIPPER\s([\s\S]*)\s{2}CONSIGNEE", fl.data.body)[0].strip().replace('\r',''),
+                    "shipperRaw"                        : shipper_raw,
                     "consignee"                         : consignee,
-                    "consigneeRaw"                      : re.findall(r"CONSIGNEE\s([\s\S]*)\s{2}PICKUP LOCATION", fl.data.body)[0].strip().replace('\r',''),
+                    "consigneeRaw"                      : consignee_raw,
                     "pickupLocation"                    : pickup_location,
-                    "pickupLocationRaw"                 : re.findall(r"PICKUP LOCATION\s([\s\S]*)INSTRUCTIONS", fl.data.body)[0].strip().replace('\r',''),
+                    "pickupLocationRaw"                 : pickup_location_raw,
                     "fullText"                          : fl.data.body
                 }
 
@@ -183,12 +187,9 @@ def ProcessDrop(input_file: str) -> Dict:
             except:
                 failure = {
                     "ReferenceNumber"   : booking_id,
-                    "shipper"           : shipper,
-                    "shipperRaw"        : re.findall(r"SHIPPER\s([\s\S]*)\s{2}CONSIGNEE", fl.data.body)[0].strip().replace('\r',''),
-                    "consignee"         : consignee,
-                    "consigneeRaw"      : re.findall(r"CONSIGNEE\s([\s\S]*)\s{2}PICKUP LOCATION", fl.data.body)[0].strip().replace('\r',''),
-                    "pickupLocation"    : pickup_location,
-                    "pickupLocationRaw" : re.findall(r"PICKUP LOCATION\s([\s\S]*)INSTRUCTIONS", fl.data.body)[0].strip().replace('\r',''),
+                    "shipperRaw"        : shipper_raw,
+                    "consigneeRaw"      : consignee_raw,
+                    "pickupLocationRaw" : pickup_location_raw,
                     "fullText"          : fl.data.body
                 }
 
