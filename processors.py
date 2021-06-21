@@ -1,12 +1,12 @@
 
-from typing import Dict
+from typing import Dict, List
 from datetime import datetime
 import extract_msg
 import csv
 import sys
 import re
 
-def ProcessShipper(shipper: str) -> Dict:
+def ParseShipperAddress(shipper: str) -> Dict:
 
     data = [elem.strip() for elem in shipper.split('\n')]
 
@@ -26,7 +26,7 @@ def ProcessShipper(shipper: str) -> Dict:
 
     return shipper
 
-def ProcessConsignee(consignee: str) -> Dict:
+def ParseConsigneeAddress(consignee: str) -> Dict:
 
     data = [elem.strip() for elem in consignee.split('\n')]
 
@@ -55,12 +55,12 @@ def ProcessConsignee(consignee: str) -> Dict:
             "phone"             : data[-1],
         }
 
-        if consignee["country"].contains('null'):
+        if 'null' in consignee["country"]:
             consignee["country"] = 'US'
 
     return consignee
 
-def ProcessPickupLocation(pickup_location: str) -> Dict:
+def ParsePickupLocationAddress(pickup_location: str) -> Dict:
 
     data = [elem.strip() for elem in pickup_location.split('\n')[:-3]]
 
@@ -80,39 +80,65 @@ def ProcessPickupLocation(pickup_location: str) -> Dict:
 
     return pickup_location
 
-def ProcessDrop(input_filename, output_filename, full_text=False):
+def ProcessDrop(input_file: str) -> Dict:
 
-    msg = extract_msg.Message(input_filename)
-    num_attachments = len(msg.attachments)
+    results = {
+        'sender'    : '',
+        'to'        : [],
+        'subject'   : '',
+        'sendDate'  : '',
+        'numDrops'  : 0,
+        'amiaDrops' : 0,
+        'baxDrops'  : 0,
+        'successess': {},
+        'failures'  : {}
+    }
 
-    if full_text:
-        with open(f"{output_filename}-FULLTEXT.txt", "w") as outfile:
-            for att in msg.attachments:
-                outfile.write(att.data.body)
-                outfile.write("\n")
+    # DEBUG
+    if input_file.endswith(".tsv"):
+        tsv = open(f'{input_file}', 'r', newline='')
+        results["successess"] = {record["ReferenceNumber"]: record for record in csv.DictReader(tsv, delimiter='\t')}
+        results["sender"] = 'debug'
+        results["to"] = 'debug'
+        results["subject"] = 'debug'
+        results['sendDate'] = '1/1/1900'
+        results["numDrops"] = len(results["successess"])
+        results["amiaDrops"] = len([x for x in results["successess"].values() if x.get("SKU") == "DROP - AMIA"])
+        results["baxDrops"] = len(results["successess"]) - results["amiaDrops"]
 
-    with open(f'{output_filename}.tsv', 'w', newline='') as csvfile:
+        for rn, record in enumerate(results["successess"].values()):
+            record["shipper"] = {"debug": f"debug {rn}"}
+            record["shipperRaw"] = f"debug {rn}"
+            record["consignee"] = {"debug": f"debug {rn}"}
+            record["consigneeRaw"] = f"debug {rn}"
+            record["pickupLocation"] = {"debug": f"debug {rn}"}
+            record["pickupLocationRaw"] = f"debug {rn}"
+            
+        tsv.close()
+        return results
 
-        fields = ["ReferenceNumber", "PurchaseOrderNumber", "ShipCarrier", "ShipService", "ShipBilling", "ShipAccount", "ShipDate", 
-                "CancelDate", "Notes", "ShipTo Name", "ShipToCompany", "ShipToAddress1", "ShipToAddress2", "ShipToCity", "ShipToState", 
-                "ShipToZip", "ShipToCountry", "ShipToPhone", "ShipToFax", "ShipToEmail", "ShipToCustomerID", "ShipToDeptNumber", "RetailerID", 
-                "SKU", "Quantity", "UseCOD", "UseInsurance", "Saved Elements", "Order Item Saved Elements", "Carrier Notes"]
+    
+    msg = extract_msg.Message(input_file)
 
-        writer = csv.DictWriter(csvfile, fieldnames=fields, delimiter='\t') 
-        #writer.writeheader()
+    results["sender"]   = msg.sender
+    results["to"]       = [recp.name for recp in msg.recipients]
+    results["subject"]  = msg.subject
+    results["sendDate"] = msg.date
+    results["numDrops"] = len(msg.attachments)
 
 
-        if num_attachments > 0:
-            print(f"Processing {num_attachments} bookings")
-            for i, fl in enumerate(msg.attachments):
+    if results["numDrops"] > 0:
+        print(f"Processing {results['numDrops']} bookings")
+        for i, fl in enumerate(msg.attachments):
 
-                try:
-                    booking_id = re.findall(r"Booking ID: (.*)", fl.data.body)[0].strip().replace('\r','')
-                    shipper = ProcessShipper(re.findall(r"SHIPPER\s([\s\S]*)\s{2}CONSIGNEE", fl.data.body)[0].strip().replace('\r',''))
-                    consignee = ProcessConsignee(re.findall(r"CONSIGNEE\s([\s\S]*)\s{2}PICKUP LOCATION", fl.data.body)[0].strip().replace('\r',''))
-                    pickup_location = ProcessPickupLocation(re.findall(r"PICKUP LOCATION\s([\s\S]*)INSTRUCTIONS", fl.data.body)[0].strip().replace('\r',''))
+            booking_id = re.findall(r"Booking ID: (.*)", fl.data.body)[0].strip().replace('\r','')
+            shipper = ParseShipperAddress(re.findall(r"SHIPPER\s([\s\S]*)\s{2}CONSIGNEE", fl.data.body)[0].strip().replace('\r',''))
+            consignee = ParseConsigneeAddress(re.findall(r"CONSIGNEE\s([\s\S]*)\s{2}PICKUP LOCATION", fl.data.body)[0].strip().replace('\r',''))
+            pickup_location = ParsePickupLocationAddress(re.findall(r"PICKUP LOCATION\s([\s\S]*)INSTRUCTIONS", fl.data.body)[0].strip().replace('\r',''))
 
-                    shipment_info = {
+            try:
+
+                shipment_info = {
                     "ReferenceNumber"                   : booking_id,
                     "PurchaseOrderNumber"               : "",
                     "ShipCarrier"                       : "UPS",
@@ -142,22 +168,41 @@ def ProcessDrop(input_filename, output_filename, full_text=False):
                     "UseInsurance"                      : "",
                     "Saved Elements"                    : "", 
                     "Order Item Saved Elements"         : "",
-                    "Carrier Notes"                     : ""
-                    }
+                    "Carrier Notes"                     : "",
+                    "shipper"                           : shipper,
+                    "shipperRaw"                        : re.findall(r"SHIPPER\s([\s\S]*)\s{2}CONSIGNEE", fl.data.body)[0].strip().replace('\r',''),
+                    "consignee"                         : consignee,
+                    "consigneeRaw"                      : re.findall(r"CONSIGNEE\s([\s\S]*)\s{2}PICKUP LOCATION", fl.data.body)[0].strip().replace('\r',''),
+                    "pickupLocation"                    : pickup_location,
+                    "pickupLocationRaw"                 : re.findall(r"PICKUP LOCATION\s([\s\S]*)INSTRUCTIONS", fl.data.body)[0].strip().replace('\r',''),
+                    "fullText"                          : fl.data.body
+                }
 
-                    writer.writerow(shipment_info)
-                    print(f"Processing booking ({i+1:02d}\{num_attachments}): {booking_id}\tStatus: Success")
-                except:
-                    print(f"Processing booking ({i+1:02d}\{num_attachments}): {booking_id}\tStatus: Fail")
-                    with open(f'{output_filename}-ERRORS.txt', 'a+') as f:
-                        f.write(fl.data.body)
-                        f.write("\n"*5)
+                results["successess"][booking_id] = shipment_info
+
+            except:
+                failure = {
+                    "ReferenceNumber"   : booking_id,
+                    "shipper"           : shipper,
+                    "shipperRaw"        : re.findall(r"SHIPPER\s([\s\S]*)\s{2}CONSIGNEE", fl.data.body)[0].strip().replace('\r',''),
+                    "consignee"         : consignee,
+                    "consigneeRaw"      : re.findall(r"CONSIGNEE\s([\s\S]*)\s{2}PICKUP LOCATION", fl.data.body)[0].strip().replace('\r',''),
+                    "pickupLocation"    : pickup_location,
+                    "pickupLocationRaw" : re.findall(r"PICKUP LOCATION\s([\s\S]*)INSTRUCTIONS", fl.data.body)[0].strip().replace('\r',''),
+                    "fullText"          : fl.data.body
+                }
+
+                results["failures"][booking_id] = failure
+
+    results["amiaDrops"] = len([x for x in results["successess"].values() if x.get("SKU") == "DROP - AMIA"])
+    results["baxDrops"] = len(results["successess"]) - results["amiaDrops"]
+    return results
 
 if __name__ == "__main__":
-
+    pass
     #f = sys.argv[1]
-    f = r"Test 1 (78).msg"
-    output_filename = datetime.now().strftime("3PLC_EI_Bookings-%Y%m%dT%H%M%S")
-    error_filename = datetime.now().strftime("3PLC_EI_Bookings-ERRORS-%Y%m%dT%H%M%S")
-    ProcessDrop(input_filename=f, output_filename=output_filename)
-    input('Press any key to exit...')
+    #f = r"email.msg"
+    #output_filename = datetime.now().strftime("3PLC_EI_Bookings-%Y%m%dT%H%M%S")
+    #error_filename = datetime.now().strftime("3PLC_EI_Bookings-ERRORS-%Y%m%dT%H%M%S")
+    #ProcessDrop(input_file=f, output_filename=output_filename)
+    #input('Press any key to exit...')
