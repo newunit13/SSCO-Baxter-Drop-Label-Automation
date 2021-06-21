@@ -21,13 +21,30 @@ class MainWindow(QMainWindow):
 
     def loadData(self, file):
 
-        self.drop_data = ProcessDrop(input_file=file, debug=False)
+        self.drop_data = ProcessDrop(input_file=file)
+
+        # Set the summary text
         self.lblSender.setText(self.drop_data["sender"])
+        self.lblTo.setText(', '.join(self.drop_data["to"]) if len(self.drop_data["to"]) > 1 else self.drop_data["to"])
+        self.lblSubject.setText(self.drop_data["subject"])
+        self.lblNumDrops.setText(str(self.drop_data["numDrops"]))
+        self.lblFailures.setText(str(len(self.drop_data["failures"])))
+        self.lblAmiaDrops.setText(str(self.drop_data["amiaDrops"]))
+        self.lblBaxDrops.setText(str(self.drop_data["baxDrops"]))
 
-
+        # Populate the tableWidget with the data
         self.tableWidget.setRowCount(len(self.drop_data["successess"]))
-        for row, record in enumerate(self.drop_data["successess"]):
-            self.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(record["ReferenceNumber"]))
+        for row, record in enumerate(self.drop_data["successess"].values()):
+            for col, item in enumerate(record.values()):
+                if col < self.tableWidget.columnCount():
+                    self.tableWidget.setItem(row, col, QtWidgets.QTableWidgetItem(item))
+
+        self.tableWidget.resizeColumnsToContents()
+        self.tableWidget.resizeRowsToContents()
+
+        # Populate the failures list with the booking IDs
+        for item in self.drop_data["failures"].values():
+            self.listWidget.addItem(QtWidgets.QListWidgetItem(item["ReferenceNumber"]))
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls:
@@ -47,26 +64,9 @@ class MainWindow(QMainWindow):
             event.accept()
 
             bf = time()
-            self.drop_data = ProcessDrop(event.mimeData().urls()[0].toLocalFile())
+            self.loadData(event.mimeData().urls()[0].toLocalFile())
             print(f'{time()-bf}')
 
-            self.lblSender.setText(self.drop_data["sender"])
-            self.lblTo.setText(', '.join(self.drop_data["to"]) if len(self.drop_data["to"]) > 1 else self.drop_data["to"])
-            self.lblSubject.setText(self.drop_data["subject"])
-            self.lblNumDrops.setText(str(self.drop_data["numDrops"]))
-            self.lblFailures.setText(str(len(self.drop_data["failures"])))
-            self.lblAmiaDrops.setText(str(self.drop_data["amiaDrops"]))
-            self.lblBaxDrops.setText(str(self.drop_data["baxDrops"]))
-
-
-
-            self.tableWidget.setRowCount(len(self.drop_data["successess"]))
-            for row, record in enumerate(self.drop_data["successess"].values()):
-                for col, item in enumerate(record.values()):
-                    if col < self.tableWidget.columnCount():
-                        self.tableWidget.setItem(row, col, QtWidgets.QTableWidgetItem(item))
-
-            self.tableWidget.resizeColumnsToContents()
         else:
             event.ignore()
 
