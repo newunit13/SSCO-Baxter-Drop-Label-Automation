@@ -80,7 +80,7 @@ def ParsePickupLocationAddress(pickup_location: str) -> Dict:
 
     return pickup_location
 
-def ProcessDrop(input_file: str) -> Dict:
+def ProcessDropsEmail(input_file: str) -> Dict:
 
     results = {
         'sender'    : '',
@@ -117,7 +117,7 @@ def ProcessDrop(input_file: str) -> Dict:
         tsv.close()
         return results
 
-    
+
     msg = extract_msg.Message(input_file)
 
     results["sender"]   = msg.sender
@@ -198,6 +198,54 @@ def ProcessDrop(input_file: str) -> Dict:
     results["amiaDrops"] = len([x for x in results["successess"].values() if x.get("SKU") == "DROP - AMIA"])
     results["baxDrops"] = len(results["successess"]) - results["amiaDrops"]
     return results
+
+def ProcessDrop(drop: dict) -> Dict:
+
+    shipper = ParseShipperAddress(drop["shipperRaw"])
+    consignee = ParseConsigneeAddress(drop["consigneeRaw"])
+    pickup_location = ParsePickupLocationAddress(drop["pickupLocationRaw"])
+
+    shipment_info = {
+                    "ReferenceNumber"                   : drop["ReferenceNumber"],
+                    "PurchaseOrderNumber"               : "",
+                    "ShipCarrier"                       : "UPS",
+                    "ShipService"                       : re.findall(r"SERVICE REQUESTED:\s+(.*)", drop["fullText"])[0].replace('\r','').replace('\n',''),
+                    "ShipBilling"                       : re.findall(r"Origin Charges:\s+(.*)", drop["fullText"])[0].replace('\r','').replace('\n',''),
+                    "ShipAccount"                       : "",
+                    "ShipDate"                          : "",
+                    "CancelDate"                        : "",
+                    "Notes"                             : "",
+                    "ShipTo Name"                       : consignee["recipent_line_1"],
+                    "ShipToCompany"                     : consignee["recipent_line_2"],
+                    "ShipToAddress1"                    : consignee["address_line_1"],
+                    "ShipToAddress2"                    : consignee["address_line_2"],
+                    "ShipToCity"                        : consignee["city"],
+                    "ShipToState"                       : consignee["state"],
+                    "ShipToZip"                         : consignee["zip"],
+                    "ShipToCountry"                     : consignee["country"],
+                    "ShipToPhone"                       : consignee["phone"],
+                    "ShipToFax"                         : "",
+                    "ShipToEmail"                       : "",
+                    "ShipToCustomerID"                  : "",
+                    "ShipToDeptNumber"                  : "",
+                    "RetailerID"                        : "",
+                    "SKU"                               : "DROP - AMIA" if "AMIA" in shipper["recipent_line_1"] else "DROP - BAXTER",
+                    "Quantity"                          : "1",
+                    "UseCOD"                            : "",
+                    "UseInsurance"                      : "",
+                    "Saved Elements"                    : "", 
+                    "Order Item Saved Elements"         : "",
+                    "Carrier Notes"                     : "",
+                    "shipper"                           : shipper,
+                    "shipperRaw"                        : drop["shipperRaw"],
+                    "consignee"                         : consignee,
+                    "consigneeRaw"                      : drop["consigneeRaw"],
+                    "pickupLocation"                    : pickup_location,
+                    "pickupLocationRaw"                 : drop["pickupLocationRaw"],
+                    "fullText"                          : drop["fullText"]
+                }
+
+    return shipment_info
 
 if __name__ == "__main__":
     pass
