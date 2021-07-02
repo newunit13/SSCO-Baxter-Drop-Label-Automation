@@ -23,7 +23,11 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Shippers Solutions - Baxter Drop Processing</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../OneDrive - The B4B Alliance/Pictures/ssco_icon.png</normaloff>../../../OneDrive - The B4B Alliance/Pictures/ssco_icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
@@ -45,99 +49,7 @@
     <property name="bottomMargin">
      <number>10</number>
     </property>
-    <item row="0" column="1" colspan="3">
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>210</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>Failures</string>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
-       <item>
-        <widget class="QListWidget" name="listWidget">
-         <property name="maximumSize">
-          <size>
-           <width>150</width>
-           <height>210</height>
-          </size>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectItems</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTabWidget" name="tabWidget">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="currentIndex">
-          <number>1</number>
-         </property>
-         <widget class="QWidget" name="tabShipper">
-          <attribute name="title">
-           <string>Shipper</string>
-          </attribute>
-          <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="0">
-            <widget class="QTextEdit" name="txtShipper">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="tabConsignee">
-          <attribute name="title">
-           <string>Consignee</string>
-          </attribute>
-          <layout class="QGridLayout" name="gridLayout_5">
-           <item row="0" column="0">
-            <widget class="QTextEdit" name="txtConsignee">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="tabPickupLocation">
-          <attribute name="title">
-           <string>Pickup Location</string>
-          </attribute>
-          <layout class="QGridLayout" name="gridLayout_6">
-           <item row="0" column="0">
-            <widget class="QTextEdit" name="txtPickupLocation">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="4">
+    <item row="1" column="0" colspan="6">
      <widget class="QTableWidget" name="tableWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -300,10 +212,10 @@
       </column>
      </widget>
     </item>
-    <item row="3" column="3">
+    <item row="3" column="5">
      <widget class="QPushButton" name="btnExport">
       <property name="enabled">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="text">
        <string>Export</string>
@@ -311,7 +223,7 @@
      </widget>
     </item>
     <item row="0" column="0">
-     <widget class="QGroupBox" name="groupBox">
+     <widget class="QGroupBox" name="SummaryGroup">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -344,7 +256,7 @@
         <enum>QLayout::SetDefaultConstraint</enum>
        </property>
        <item row="0" column="0">
-        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0">
+        <layout class="QVBoxLayout" name="LabelsLayout" stretch="0,0,0,0,0,0,0">
          <property name="spacing">
           <number>6</number>
          </property>
@@ -436,7 +348,7 @@
         </layout>
        </item>
        <item row="0" column="1">
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <layout class="QVBoxLayout" name="InfoLayout">
          <item>
           <widget class="QLabel" name="lblSender">
            <property name="text">
@@ -491,17 +403,127 @@
       </layout>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QPushButton" name="pushButton">
+    <item row="0" column="1">
+     <widget class="QGroupBox" name="FailureGroup">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="maximumSize">
        <size>
-        <width>250</width>
-        <height>16777215</height>
+        <width>160</width>
+        <height>210</height>
        </size>
       </property>
-      <property name="text">
-       <string>PushButton</string>
+      <property name="title">
+       <string>Failures</string>
       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0">
+       <item>
+        <widget class="QListWidget" name="lstFailures">
+         <property name="maximumSize">
+          <size>
+           <width>150</width>
+           <height>210</height>
+          </size>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectItems</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnSubmitError">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Submit</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="2" colspan="4">
+     <widget class="QGroupBox" name="AddressesGroup">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>210</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Address Information</string>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>210</height>
+          </size>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="tabShipper">
+          <attribute name="title">
+           <string>Shipper</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="0" column="0">
+            <widget class="QTextEdit" name="txtShipper">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tabConsignee">
+          <attribute name="title">
+           <string>Consignee</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="0" column="1">
+            <widget class="QTextEdit" name="txtConsignee">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tabPickupLocation">
+          <attribute name="title">
+           <string>Pickup Location</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_6">
+           <item row="0" column="0">
+            <widget class="QTextEdit" name="txtPickupLocation">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
@@ -519,26 +541,10 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="actionOpen"/>
-    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <addaction name="menuFIle"/>
   </widget>
-  <action name="actionOpen">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Open</string>
-   </property>
-   <property name="toolTip">
-    <string>Open</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
-   </property>
-  </action>
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
@@ -570,8 +576,8 @@
    <slot>exportData()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1046</x>
-     <y>778</y>
+     <x>1184</x>
+     <y>789</y>
     </hint>
     <hint type="destinationlabel">
      <x>935</x>
@@ -580,7 +586,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>listWidget</sender>
+   <sender>lstFailures</sender>
    <signal>itemClicked(QListWidgetItem*)</signal>
    <receiver>MainWindow</receiver>
    <slot>loadFailure(QListWidgetItem*)</slot>
@@ -592,22 +598,6 @@
     <hint type="destinationlabel">
      <x>569</x>
      <y>27</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>addRow()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>200</x>
-     <y>779</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>329</x>
-     <y>779</y>
     </hint>
    </hints>
   </connection>
@@ -624,6 +614,22 @@
     <hint type="destinationlabel">
      <x>668</x>
      <y>781</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSubmitError</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addRow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>683</x>
+     <y>219</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>748</x>
+     <y>216</y>
     </hint>
    </hints>
   </connection>
