@@ -22,15 +22,7 @@ class MainWindow(QMainWindow):
     def loadData(self, file):
 
         self.drop_data = ProcessDropsEmail(input_file=file)
-
-        # Set the summary text
-        self.lblSender.setText(self.drop_data["sender"])
-        self.lblTo.setText(', '.join(self.drop_data["to"]) if len(self.drop_data["to"]) > 1 else self.drop_data["to"])
-        self.lblSubject.setText(self.drop_data["subject"])
-        self.lblNumDrops.setText(str(self.drop_data["numDrops"]))
-        self.lblFailures.setText(str(len(self.drop_data["failures"])))
-        self.lblAmiaDrops.setText(str(self.drop_data["amiaDrops"]))
-        self.lblBaxDrops.setText(str(self.drop_data["baxDrops"]))
+        self.updateSummarylabels()
 
         # Populate the tableWidget with the data
         self.tableWidget.setRowCount(len(self.drop_data["successess"]))
@@ -52,7 +44,15 @@ class MainWindow(QMainWindow):
             # Set the summary label red and bold
             self.lblFailures.setStyleSheet("font-weight: bold; color: rgb(255, 0, 0);")
 
-            
+    def updateSummarylabels(self):
+        # Set the summary text
+        self.lblSender.setText(self.drop_data["sender"])
+        self.lblTo.setText(', '.join(self.drop_data["to"]) if len(self.drop_data["to"]) > 1 else self.drop_data["to"][0])
+        self.lblSubject.setText(self.drop_data["subject"])
+        self.lblNumDrops.setText(str(self.drop_data["numDrops"]))
+        self.lblFailures.setText(str(len(self.drop_data["failures"])))
+        self.lblAmiaDrops.setText(str(self.drop_data["amiaDrops"]))
+        self.lblBaxDrops.setText(str(self.drop_data["baxDrops"]))
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls:
@@ -140,6 +140,7 @@ class MainWindow(QMainWindow):
             self.btnSubmitError.setEnabled(False)
 
 
+        self.updateSummarylabels()
 
     def exportData(self):
 
