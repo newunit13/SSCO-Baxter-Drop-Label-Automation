@@ -95,6 +95,7 @@ class MainWindow(QMainWindow):
         record = self.drop_data["failures"][reference_number]
         self.setRecordText(record)
         self.txtConsignee.setEnabled(True)
+        self.btnSubmitError.setEnabled(True)
 
 
     def addRow(self):
