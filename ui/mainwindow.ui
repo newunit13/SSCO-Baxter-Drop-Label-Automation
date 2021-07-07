@@ -25,10 +25,6 @@
   <property name="windowTitle">
    <string>Shippers Solutions - Baxter Drop Processing</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>../../../OneDrive - The B4B Alliance/Pictures/ssco_icon.png</normaloff>../../../OneDrive - The B4B Alliance/Pictures/ssco_icon.png</iconset>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
     <bool>true</bool>
