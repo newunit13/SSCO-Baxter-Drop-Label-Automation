@@ -9,6 +9,11 @@ import sys
 
 from processors import ProcessDropsEmail, ProcessDrop
 
+# Set application ID
+import ctypes
+myappid = 'com.ciservicesnow.sscobaxterdrops.1.0'
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
 
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
