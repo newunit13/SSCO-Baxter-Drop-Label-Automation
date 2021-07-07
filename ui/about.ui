@@ -25,19 +25,6 @@
   <property name="modal">
    <bool>true</bool>
   </property>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>280</x>
-     <y>140</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Close</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="lblLogo">
    <property name="geometry">
     <rect>
@@ -47,9 +34,48 @@
      <height>81</height>
     </rect>
    </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string/>
    </property>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>110</y>
+     <width>348</width>
+     <height>53</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Version: 1.0</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Written by: Edward Russell II</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Processing Baxter drops slowing you down? Use this to speed things up!</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>
