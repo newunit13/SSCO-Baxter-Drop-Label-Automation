@@ -109,6 +109,11 @@ class MainWindow(QMainWindow):
             record["pickupLocationRaw"] = self.txtPickupLocation.toPlainText()
             record = ProcessDrop(record)
             self.drop_data["successess"][record["ReferenceNumber"]] = record
+            if record.get("SKU") == "DROP - AMIA":
+                self.drop_data["amiaDrops"] += 1
+            else:
+                self.drop_data["baxDrops"] += 1
+
         except Exception as e:
             print(e)
             return
