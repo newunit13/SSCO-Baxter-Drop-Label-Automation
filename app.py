@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
 
             # Populate the failures list with the booking IDs    
             for item in self.drop_data["failures"].values():
-                self.listWidget.addItem(QtWidgets.QListWidgetItem(item["ReferenceNumber"]))
+                self.lstFailures.addItem(QtWidgets.QListWidgetItem(item["ReferenceNumber"]))
 
             # Set the summary label red and bold
             self.lblFailures.setStyleSheet("font-weight: bold; color: rgb(255, 0, 0);")
@@ -101,7 +101,7 @@ class MainWindow(QMainWindow):
     def addRow(self):
         ## Parse text from shipper, consignee, and pickuploactions
 
-        reference_number = self.listWidget.selectedItems()[0].text()
+        reference_number = self.lstFailures.selectedItems()[0].text()
         record = self.drop_data["failures"][reference_number]
 
         try:
