@@ -640,5 +640,6 @@
   <slot>exportData()</slot>
   <slot>loadFailure(QListWidgetItem*)</slot>
   <slot>addRow()</slot>
+  <slot>updateSummaryLabels()</slot>
  </slots>
 </ui>
