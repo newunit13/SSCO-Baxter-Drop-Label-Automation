@@ -119,6 +119,20 @@ class MainWindow(QMainWindow):
             if col < self.tableWidget.columnCount():
                 self.tableWidget.setItem(new_row, col, QtWidgets.QTableWidgetItem(item))
 
+        # Remove failure record from failure list
+        self.lstFailures.takeItem(self.lstFailures.selectedIndexes()[0].row())
+
+        # remove failure from failures
+        del self.drop_data["failures"][reference_number]
+
+        # test failure label text with number of failures left
+        self.lblFailures.setText(str(len(self.drop_data["failures"])))
+        
+        # set the failure label text back to black and disabled submit button if no failures left
+        if not self.drop_data["failures"]:
+            self.lblFailures.setStyleSheet("font-weight: normal; color: rgb(0, 0, 0);")
+            self.btnSubmitError.setEnabled(False)
+
 
 
     def exportData(self):
