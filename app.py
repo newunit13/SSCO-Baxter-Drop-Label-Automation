@@ -1,9 +1,7 @@
-import enum
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QListWidget, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 from PyQt5.uic import loadUi
-from datetime import datetime
 from time import time
 import sys
 
@@ -15,6 +13,14 @@ myappid = 'com.ciservicesnow.sscobaxterdrops.1.0'
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
+class AboutDialog(QDialog):
+    def __init__(self) -> None:
+        super(AboutDialog, self).__init__()
+        loadUi("ui\\about.ui", self)
+        self.setFixedSize(self.size())
+        self.lblLogo.setScaledContents(True)
+        self.lblLogo.setPixmap(QtGui.QPixmap("./assets/ssco_logo.png"))
+
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super(MainWindow, self).__init__()
@@ -22,6 +28,16 @@ class MainWindow(QMainWindow):
         #self.tableWidget.dragEnterEvent = self.dragEnterEvent
         #self.tableWidget.dragMoveEvent = self.dragMoveEvent
         self.tableWidget.dropEvent = self.dropEvent
+
+        self.actionExit.triggered.connect(self.exitApp)
+        self.actionAbout.triggered.connect(self.showAbout)
+
+    def exitApp(self):
+        sys.exit(app.exec_())
+
+    def showAbout(self):
+        dialog = AboutDialog()
+        dialog.exec_()
 
     def loadData(self, file):
 
