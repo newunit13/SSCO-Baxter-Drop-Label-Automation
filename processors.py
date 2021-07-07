@@ -55,9 +55,6 @@ def ParseConsigneeAddress(consignee: str) -> Dict:
             "phone"             : data[-1],
         }
 
-        if 'null' in consignee["country"]:
-            consignee["country"] = 'US'
-
     return consignee
 
 def ParsePickupLocationAddress(pickup_location: str) -> Dict:
